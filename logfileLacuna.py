@@ -7,6 +7,8 @@ import csv
 from collections import defaultdict
 from NoteInstance import NoteInstance
 from topicModelLDA import LDAtopicModel as ldat
+import re, math
+from collections import Counter
 
 # User Inputs
 NUM_LDA_TOPICS = 15  # number of topics in topic model
@@ -69,9 +71,15 @@ def run():
                 list_passage_sentences.append(ldat.to_bow(ldat.clean_string(txt_passage)))
                 list_note_sentences.append(ldat.to_bow(ldat.clean_string(txt_note)))
 
+                # Convert strings to vectors
+                #vector1 = text_to_vector(txt_passage)
+                #vector2 = text_to_vector(txt_note)
+                vector1 = Counter(ldat.to_bow(txt_passage))
+                vector2 = Counter(ldat.to_bow(txt_note))
                 # Calculate similarity between note and passage
+                cosine = get_cosine(vector1, vector2)
 
-                #note_instance.set_similarity()
+                note_instance.set_similarity(cosine)
                 list_all_lines.append(note_instance)
             else:
                 list_headers = line
@@ -88,7 +96,9 @@ def run():
 
         # assign LDA topic
         topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note())) # returns a tuple if you don't manually name it yourself!
-        note_instance.set_topic(topic_name)
+        name_cleaned = topic_name.replace("(","")
+        name_cleaned = name_cleaned.replace(")", "")
+        note_instance.set_topic(name_cleaned)
 
         # write this instance to file
         outfile_out.write(note_instance.to_string(delimiter=CONST_DELIMITER)+'\n')
@@ -108,19 +118,28 @@ def get_topic_match(sentence):
         tm = tm*100
     return str(tm)
 
-def is_help_topic(sentence):
+def get_cosine(vec1, vec2):
+    """"
+    Calculates cosine similarity between two vectors of words.
+    Does not remove stop words or handle stemming or any advanced stuff.
+
+    Code from http://stackoverflow.com/questions/15173225/how-to-calculate-cosine-similarity-given-2-sentence-strings-python
+    More on cosine similarity: https://en.wikipedia.org/wiki/Cosine_similarity
+    :param vec1: first vector to compare
+    :param vec2: second vector to compare against vec1
+    :return: cosine similarity
     """
-    Determine if the given string (message post) contains a question or help request.
-    #TODO: This is a really over simplistic way of caclulating such a thing
-    :param sentence: a string sentence / message post
-    :return: True if the string is about help seeking
-    """
-    # TODO: this is a super naive way to determine this
-    if "help" in sentence or "question" in sentence or "?" in sentence or "dunno" in sentence or "n't know" in sentence:
-        return True
-    if "confus" in sentence or "struggl" in sentence or "lost" in sentence or "stuck" in sentence or "know how" in sentence:
-        return True
-    return False
+    intersection = set(vec1.keys()) & set(vec2.keys())
+    numerator = sum([vec1[x] * vec2[x] for x in intersection])
+
+    sum1 = sum([vec1[x] ** 2 for x in vec1.keys()])
+    sum2 = sum([vec2[x] ** 2 for x in vec2.keys()])
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+    if not denominator:
+        return 0.0
+    else:
+        return float(numerator) / denominator
 
 '''
 So that logfileLacuna can act as either a reusable module, or as a standalone program.
