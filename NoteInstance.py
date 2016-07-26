@@ -20,6 +20,7 @@ class NoteInstance(object):
 
     # calculated
     count = -1
+    topic_index = -1
     topic=""
     similarity=-1
 
@@ -68,6 +69,9 @@ class NoteInstance(object):
     def set_topic(self, t):
         self.topic=t
 
+    def set_topic_index(self, ti):
+        self.topic_index=ti
+
     def set_similarity(self,si):
         self.similarity = si
 
@@ -85,7 +89,9 @@ class NoteInstance(object):
         line += self.code_strategy + delimiter
         line += "\"" + self.notes + "\"" + delimiter
         line += self.code_top_calculate + delimiter + self.code_combined
-        line += delimiter + str(self.count) + delimiter + self.topic + delimiter + str(self.similarity)
+        line += delimiter + str(self.count) + delimiter
+        #line += str(self.topic_index) + delimiter
+        line += self.topic + delimiter + str(self.similarity)
 
         return line
 

@@ -73,9 +73,10 @@ class LDAtopicModel(object):
         for topic in self.lda.print_topics(self.number_of_topics):
             print("\t(" + str(i) + ") "+ str(topic))
             if (self.topic_naming):
-                self.topic_names.append(input("> A name for topic (" + str(i) + "): "))
+                topics_name = [i, input("> A name for topic (" + str(i) + "): ")]
+                self.topic_names.append(topics_name)
             else:
-                self.topic_names.append("topic"+str(i))
+                self.topic_names.append(str(topic))
             i += 1
         print("Done creating LDA topic model")
 

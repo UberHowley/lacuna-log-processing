@@ -4,8 +4,6 @@ __author__ = 'IH'
 __project__ = 'analyzeLacuna'
 
 import csv
-import datetime
-import random
 from collections import defaultdict
 from NoteInstance import NoteInstance
 from topicModelLDA import LDAtopicModel as ldat
@@ -20,11 +18,12 @@ FILENAME_OUTFILE="combined_final_codes_sim.csv"
 # TEXT-RELATED VARIABLES
 CONST_DELIMITER = ","
 COL_HEADERS = []  # the headers of the file
-COL_PASSAGE = "passage"
-COL_NOTE = "annotation"
-COL_SIM = "similarity"
+COL_COUNT = "line_count"
+COL_TINDEX = "LDAtopic_index"
 COL_TOPIC = "LDAtopic"
+COL_SIM = "similarity"
 
+list_headers = [] # a list of the original input headers
 list_all_lines = [] # a list of NoteInstance of every line
 list_passage_sentences = []  # a list of a list of all words in passages
 list_note_sentences = []  # a list of a list of all words in annotations
@@ -74,14 +73,21 @@ def run():
 
                 #note_instance.set_similarity()
                 list_all_lines.append(note_instance)
+            else:
+                list_headers = line
+                list_headers.append(COL_COUNT)
+                list_headers.append(COL_TINDEX)
+                list_headers.append(COL_TOPIC)
+                list_headers.append(COL_SIM)
             count_lines +=1
 
+    outfile_out.write(str(list_headers) + '\n')
     # topic modeling
     lda = ldat(NUM_LDA_TOPICS, list_note_sentences)
     for note_instance in list_all_lines:
 
         # assign LDA topic
-        topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note()))
+        topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note())) # returns a tuple if you don't manually name it yourself!
         note_instance.set_topic(topic_name)
 
         # write this instance to file
