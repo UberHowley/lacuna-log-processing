@@ -15,7 +15,8 @@ class LDAtopicModel(object):
     docs = []
     topic_names = []
     lda = None
-    topic_naming = False # set to True if you'd like to be prompted to name teh topics
+
+    topic_naming = False # set to True if you'd like to be prompted to name the topics
     FORMAT_LINE = "--------------------"
 
     def __init__(self, nt, docs_as_bow):
@@ -25,6 +26,12 @@ class LDAtopicModel(object):
         :param docs_as_bow: a list of text documents as bags of words
         :return: None
         """
+        #initializing defaults
+        self.number_of_topics = 1
+        self.docs = []
+        self.topic_names = []
+        self.lda = None
+
         self.docs = docs_as_bow
         self.number_of_topics = nt
         self.create_lda()
@@ -37,7 +44,7 @@ class LDAtopicModel(object):
         :param all_docs: a list of bag of words (each string split into its own list)
         :return: None
         """
-        print("Creating LDA topic model from " + str(len(self.docs)) + " documents.")
+        print("Creating LDA topic model from " + str(len(self.docs)) + " documents and " + str(self.number_of_topics) + " number of topics.")
         num_topics = self.number_of_topics
         chunk_size = int(len(self.docs)/100)
         if chunk_size < 1:
@@ -78,7 +85,7 @@ class LDAtopicModel(object):
             else:
                 self.topic_names.append(str(topic))
             i += 1
-        print("Done creating LDA topic model")
+        print("Done creating LDA topic model.")
 
 
     def predict_topic(self, document):

@@ -11,9 +11,9 @@ import re, math
 from collections import Counter
 
 # User Inputs
-MIN_NUM_LDA_TOPICS = 5
 NUM_LDA_TOPICS = 15  # default number of topics in topic model
-MAX_LDA_TOPICS = 10  # set to 1 if only want default number of topics. 30 means 5-30 topic models, with that number of topics. Minimum of 6!
+MIN_NUM_LDA_TOPICS = 5 # starting number of topics, if greater than MAX, uses default
+MAX_NUM_LDA_TOPICS = 40  # set to less than MIN if only want default number
 
 # LOGFILE NAMES
 FILENAME_LOGFILE="combined_final_codes.csv"
@@ -87,16 +87,22 @@ def run():
                 list_headers = line
                 list_headers.append(COL_COUNT)
                 list_headers.append(COL_SIM)
-                list_headers.append(COL_TINDEX)
-                list_headers.append(COL_TOPIC)
+                for num_topic in range(MIN_NUM_LDA_TOPICS, MAX_NUM_LDA_TOPICS):
+                    list_headers.append(COL_TINDEX+str(num_topic))
+                    list_headers.append(COL_TOPIC+str(num_topic))
             count_lines +=1
 
     outfile_out.write(str(list_headers) + '\n')
-    # topic modeling
-    for num_topics in range (MIN_NUM_LDA_TOPICS, MAX_LDA_TOPICS):
-        if MAX_LDA_TOPICS <= MIN_NUM_LDA_TOPICS:
-            num_topics = NUM_LDA_TOPICS
 
+    # topic modeling
+    """
+    if MAX_NUM_LDA_TOPICS <= MIN_NUM_LDA_TOPICS:
+        MIN_NUM_LDA_TOPICS = NUM_LDA_TOPICS
+        MAX_NUM_LDA_TOPICS = NUM_LDA_TOPICS+1
+    """
+
+    for num_topics in range(MIN_NUM_LDA_TOPICS, MAX_NUM_LDA_TOPICS):
+        lda = None
         lda = ldat(num_topics, list_note_sentences)
         for note_instance in list_all_lines: # assigns many topics depending on MAX LDA TOPICS
             # assign LDA topic
