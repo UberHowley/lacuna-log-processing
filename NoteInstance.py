@@ -21,7 +21,7 @@ class NoteInstance(object):
     # calculated
     count = -1
     topic_index = -1
-    topic=""
+    list_topics = []  # a list of topics
     similarity=-1
 
 
@@ -40,8 +40,6 @@ class NoteInstance(object):
         :param ctc: calculated top code based on strategy
         :param cc: combined strategy code
         :param l: line number
-        :param to: topic name
-        :param si: similarity between note and passage
         :return: None
         """
         self.note_id = ni
@@ -57,6 +55,8 @@ class NoteInstance(object):
         self.code_combined = cc
         self.count = l
 
+        self.list_topics = []  # initialize the list
+
     def get_passage(self):
         return self.passage
 
@@ -67,7 +67,18 @@ class NoteInstance(object):
         self.count = l
 
     def set_topic(self, t):
-        self.topic=t
+        """
+        Set the topics list to be this list
+        :param t: a list of topics
+        """
+        self.list_topics=t
+
+    def add_topic(self, t):
+        """
+        Adds a topic to the existing list
+        :param t: a topic to add to the list of topics
+        """
+        self.list_topics.append(t)
 
     def set_topic_index(self, ti):
         self.topic_index=ti
@@ -90,9 +101,11 @@ class NoteInstance(object):
         line += "\"" + self.notes + "\"" + delimiter
         line += self.code_top_calculate + delimiter + self.code_combined
         line += delimiter + str(self.count) + delimiter
-        line += str(self.similarity) + delimiter
+        line += str(self.similarity)
         #line += str(self.topic_index) + delimiter
-        line += self.topic
 
+        # topic is now a list of topics
+        for top in self.list_topics:
+            line += delimiter + top
         return line
 

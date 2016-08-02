@@ -98,7 +98,7 @@ def run():
         topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note())) # returns a tuple if you don't manually name it yourself!
         name_cleaned = topic_name.replace("(","")
         name_cleaned = name_cleaned.replace(")", "")
-        note_instance.set_topic(name_cleaned)
+        note_instance.add_topic(name_cleaned)
 
         # write this instance to file
         outfile_out.write(note_instance.to_string(delimiter=CONST_DELIMITER)+'\n')
