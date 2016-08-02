@@ -11,7 +11,9 @@ import re, math
 from collections import Counter
 
 # User Inputs
-NUM_LDA_TOPICS = 15  # number of topics in topic model
+MIN_NUM_LDA_TOPICS = 5
+NUM_LDA_TOPICS = 15  # default number of topics in topic model
+MAX_LDA_TOPICS = 10  # set to 1 if only want default number of topics. 30 means 5-30 topic models, with that number of topics. Minimum of 6!
 
 # LOGFILE NAMES
 FILENAME_LOGFILE="combined_final_codes.csv"
@@ -91,17 +93,21 @@ def run():
 
     outfile_out.write(str(list_headers) + '\n')
     # topic modeling
-    lda = ldat(NUM_LDA_TOPICS, list_note_sentences)
-    for note_instance in list_all_lines:
+    for num_topics in range (MIN_NUM_LDA_TOPICS, MAX_LDA_TOPICS):
+        if MAX_LDA_TOPICS <= MIN_NUM_LDA_TOPICS:
+            num_topics = NUM_LDA_TOPICS
 
-        # assign LDA topic
-        topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note())) # returns a tuple if you don't manually name it yourself!
-        name_cleaned = topic_name.replace("(","")
-        name_cleaned = name_cleaned.replace(")", "")
-        note_instance.add_topic(name_cleaned)
+        lda = ldat(num_topics, list_note_sentences)
+        for note_instance in list_all_lines: # assigns many topics depending on MAX LDA TOPICS
+            # assign LDA topic
+            topic_name = lda.predict_topic(ldat.clean_string(note_instance.get_note())) # returns a tuple if you don't manually name it yourself!
+            name_cleaned = topic_name.replace("(","")
+            name_cleaned = name_cleaned.replace(")", "")
+            note_instance.add_topic(name_cleaned)
 
+    for note_instance in list_all_lines: # print each instance now
         # write this instance to file
-        outfile_out.write(note_instance.to_string(delimiter=CONST_DELIMITER)+'\n')
+        outfile_out.write(note_instance.to_string(delimiter=CONST_DELIMITER) + '\n')
 
     outfile_out.close()
     print("Done writing " + FILENAME_OUTFILE)
