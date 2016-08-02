@@ -90,8 +90,9 @@ class NoteInstance(object):
         line += "\"" + self.notes + "\"" + delimiter
         line += self.code_top_calculate + delimiter + self.code_combined
         line += delimiter + str(self.count) + delimiter
+        line += str(self.similarity) + delimiter
         #line += str(self.topic_index) + delimiter
-        line += self.topic + delimiter + str(self.similarity)
+        line += self.topic
 
         return line
 

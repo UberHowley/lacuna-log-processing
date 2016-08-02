@@ -84,9 +84,9 @@ def run():
             else:
                 list_headers = line
                 list_headers.append(COL_COUNT)
+                list_headers.append(COL_SIM)
                 list_headers.append(COL_TINDEX)
                 list_headers.append(COL_TOPIC)
-                list_headers.append(COL_SIM)
             count_lines +=1
 
     outfile_out.write(str(list_headers) + '\n')
