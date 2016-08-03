@@ -50,6 +50,9 @@ def run():
             #line = line.replace(CONST_DELIMITER, ' ')  # Replace all occurrences of delimiter with empty space
             #array_line = line.split(CONST_DELIMITER)
 
+            global MIN_NUM_LDA_TOPICS # ugh
+            global MAX_NUM_LDA_TOPICS
+
             # first line is headers, only store following lines
             if (count_lines > 0):
                 # TODO: Make it so clean_string() isn't needed, look into CSV writing.
@@ -95,11 +98,9 @@ def run():
     outfile_out.write(str(list_headers) + '\n')
 
     # topic modeling
-    """
     if MAX_NUM_LDA_TOPICS <= MIN_NUM_LDA_TOPICS:
         MIN_NUM_LDA_TOPICS = NUM_LDA_TOPICS
         MAX_NUM_LDA_TOPICS = NUM_LDA_TOPICS+1
-    """
 
     for num_topics in range(MIN_NUM_LDA_TOPICS, MAX_NUM_LDA_TOPICS):
         lda = None
